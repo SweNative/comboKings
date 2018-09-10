@@ -119,6 +119,7 @@ export default class App extends React.Component {
 
       <View style={{marginTop: 40}}>
         <Text>Antons text :D</Text>
+        <Text>Antons text 2 D:</Text>
       </View>
 
 
