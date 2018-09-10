@@ -117,6 +117,10 @@ export default class App extends React.Component {
         </TouchableOpacity>
       </View>
 
+      <View style={{marginTop: 40}}>
+        <Text>Antons text :D</Text>
+      </View>
+
 
       </View>
     );
