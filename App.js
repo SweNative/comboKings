@@ -14,6 +14,8 @@ export default class App extends React.Component {
         [0, 0, 0]
       ],
       score: 0,
+      comboScore: 0,
+      isCombo: true,
     }
   }
 
@@ -65,18 +67,23 @@ export default class App extends React.Component {
     else if(value === 100){ 
       newGameState[row][col] = 0
     }
-    
+    this.setState({gameState: newGameState})
+
+
+
   var x = true
   newScore = this.state.score
-  this.setState({gameState: newGameState})
+  newComboScore = this.state.comboScore
+  isCombo = false
   while(x){
     x = false
     var combo = this.threeInRow()
-
+    i
     for(var i = 0; i < 3; i++){
         if(combo[0][i] === 1){
-            newScore++
-            this.setState({score: newScore})
+            isCombo = true
+            newComboScore++
+            newScore = newScore + newComboScore
             x = true
             for(var j = 0; j < 3; j++){
                 var newColor = getRandomInt(3)
@@ -95,8 +102,9 @@ export default class App extends React.Component {
 
     for(var i = 0; i < 3; i++){
       if(combo[1][i] === 1){
-         newScore++
-         this.setState({score: newScore})
+        isCombo = true
+        newComboScore++
+        newScore = newScore + newComboScore
           x = true
           for(var j = 0; j < 3; j++){
               var newColor = getRandomInt(3)
@@ -113,8 +121,9 @@ export default class App extends React.Component {
       }
     }
     if(combo[2][0] === 1){
-      newScore++
-      this.setState({score: newScore})
+      isCombo = true
+      newComboScore++
+      newScore = newScore + newComboScore
       x = true
       for(var j = 0; j < 3; j++){
           var newColor = getRandomInt(3)
@@ -131,8 +140,9 @@ export default class App extends React.Component {
     }
 
     if(combo[2][1] === 1){
-      newScore++
-      this.setState({score: newScore})
+      isCombo = true
+      newComboScore++
+      newScore = newScore + newComboScore
       x = true
       for(var j = 0; j < 3; j++){
           var newColor = getRandomInt(3)
@@ -147,7 +157,16 @@ export default class App extends React.Component {
           }
       }
     }
+
+    if(!isCombo){
+      newComboScore = 0
+    }
+    
+
     this.setState({gameState: newGameState})
+    this.setState({comboScore: newComboScore})
+    this.setState({score: newScore})
+    this.setState({isCombo: isCombo})
   }
 
   }
@@ -188,7 +207,11 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}> 
-      <View>
+      <View style = {{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+        <Text style={styles.comboScoreText} >
+          {'Combo:' + ' ' + this.state.comboScore}
+        </Text>
+
         <Text style={styles.scoreText} >
           {this.state.score}
         </Text>
@@ -242,10 +265,7 @@ export default class App extends React.Component {
         </TouchableOpacity>
       </View>
 
-      <View style={{marginTop: 40}}>
-        <Text>Antons text :D</Text>
-        <Text>Antons text 2 D:</Text>
-      </View>
+      
 
 
       </View>
@@ -267,6 +287,10 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     fontSize: 75,
-    paddingBottom: 50,
+    marginBottom: 50,
+  },
+  comboScoreText: {
+    fontSize: 20,
+    marginBottom: 15,
   }
 });
