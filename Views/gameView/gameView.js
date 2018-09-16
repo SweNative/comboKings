@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity} from 'react-native';
 import getRandomInt from '../../Assets/functions/getRandomInt'
+import Modal2 from '../../Components/Modal2'
 
 export default class gameView extends Component {
     constructor(props){
@@ -16,13 +17,16 @@ export default class gameView extends Component {
           comboScore: 0,
           isCombo: true,
           hasNotStarted: true,
+          timeLeft: 30,
+          isTimeLeft: true,
+          timer: null,
         }
       }
     
       componentDidMount() {
         this.InitializeGame()
       }
-    
+     
       InitializeGame = () => {
         this.setState({gameState:
           [
@@ -68,6 +72,7 @@ export default class gameView extends Component {
       onTilePress = (row, col) => {
         var value = this.state.gameState[row][col];
         var newGameState = this.state.gameState.slice();
+        if(this.state.isTimeLeft){
         if(value === 0){
          newGameState[row][col] = 10
         }
@@ -178,6 +183,7 @@ export default class gameView extends Component {
         this.setState({score: newScore})
         this.setState({isCombo: isCombo})
       }
+      }
     
       }
     
@@ -213,29 +219,52 @@ export default class gameView extends Component {
         return combo
       
       }
-    
+
+      tick = () => {
+        timeLeft =  this.state.timeLeft -1
+        this.setState({timeLeft: timeLeft});
+        if(timeLeft <= 0){
+          clearInterval(this.state.timer);
+          this.setState({isTimeLeft: false});
+        }
+      }
+
+      decreaseTime = () => {
+        this.setState({hasNotStarted: false})
+        let timer = setInterval(this.tick, 1000);
+        this.setState({timer});
+      }
+
+      onPlayAgain = () => {
+
+      }
+     
       render() {
         return (
          this.state.hasNotStarted 
          ? <View style={styles.container}> 
-            <TouchableOpacity onPress = {() => this.setState({hasNotStarted: false})} style = {styles.startBox}>
+            <TouchableOpacity onPress = {() => this.decreaseTime()} style = {styles.startBox}>
              <Text style={styles.startText} >
               {'Tap to Start!'}
              </Text> 
             </TouchableOpacity>
             </View>
-         :<View style={styles.container}> 
+          :<View style={styles.container}> 
+          <Text style={styles.comboScoreText} >
+              {'Time: ' + this.state.timeLeft}
+          </Text>
           <View style = {{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
             <Text style={styles.comboScoreText} >
-              {'Combo:' + ' ' + this.state.comboScore}
+              {'Combo: ' + this.state.comboScore}
             </Text>
     
             <Text style={styles.scoreText} >
               {this.state.score}
             </Text>
           </View>
-    
-    
+          
+        
+          
     
           <View style = {{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}} >
             <TouchableOpacity onPress = {() => this.onTilePress(0,0)} style = {[styles.tile, {borderLeftWidth: 0, borderTopWidth: 0 }]}>
@@ -250,10 +279,6 @@ export default class gameView extends Component {
             {this.tileColor(0,2)}
             </TouchableOpacity>
           </View>
-    
-    
-    
-    
     
           <View style = {{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}} >
             <TouchableOpacity onPress = {() => this.onTilePress(1,0)} style = {[styles.tile, {borderLeftWidth: 0}]} >
@@ -283,10 +308,8 @@ export default class gameView extends Component {
             </TouchableOpacity>
           </View>
     
-          
-    
-    
           </View>
+          
         );
       }
 }
@@ -298,6 +321,13 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'column'
+    },
+    container2: {
+      flex: 1,
+      backgroundColor: '#9efffd',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row'
     },
     tile: {
       borderWidth:1,
@@ -323,5 +353,9 @@ const styles = StyleSheet.create({
     },
     startText: {
         fontSize: 50,
+    },
+    playAgainText: {
+      fontSize: 30,
+      zIndex: 10,
     }
   });
