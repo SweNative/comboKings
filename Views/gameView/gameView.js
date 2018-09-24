@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Alert} from 'react-native';
 import getRandomInt from '../../Assets/functions/getRandomInt'
 import Modal2 from '../../Components/Modal2'
 
@@ -178,13 +178,11 @@ export default class gameView extends Component {
         }
         
     
-        this.setState({gameState: newGameState})
-        this.setState({comboScore: newComboScore})
-        this.setState({score: newScore})
-        this.setState({isCombo: isCombo})
+        this.setState({gameState: newGameState, comboScore: newComboScore, score: newScore, isCombo})
+        
       }
       }
-    
+     
       }
     
       threeInRow = () => {
@@ -226,6 +224,7 @@ export default class gameView extends Component {
         if(timeLeft <= 0){
           clearInterval(this.state.timer);
           this.setState({isTimeLeft: false});
+          this.gameOver()
         }
       }
 
@@ -235,9 +234,23 @@ export default class gameView extends Component {
         this.setState({timer});
       }
 
-      onPlayAgain = () => {
+      gameOver = () => {
+        Alert.alert(
+          'Game Over',
+          'Score: ' + this.state.score,
+          [{ text: 'Play Again', onPress: () => this.playAgain() }],
+          {
+            cancelable: false
+          }
+        )
 
       }
+
+      playAgain = () => {
+
+      }
+
+
      
       render() {
         return (
