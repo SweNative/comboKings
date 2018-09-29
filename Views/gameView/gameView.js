@@ -6,7 +6,8 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
-  AsyncStorage
+  AsyncStorage,
+  Animated
 } from "react-native";
 import getRandomInt from "../../Assets/functions/getRandomInt";
 
@@ -20,7 +21,8 @@ export default class gameView extends Component {
     timeLeft: 10,
     isTimeLeft: true,
     timer: null,
-    highScore: 0
+    highScore: 0,
+    scoreAnim: new Animated.Value(1)
   };
 
   componentDidMount() {
@@ -177,6 +179,11 @@ export default class gameView extends Component {
           newComboScore = 0;
         }
 
+        if (this.state.score != newScore) {
+          this.animateScoreBig();
+          setTimeout(this.animateScoreSmall, 250);
+        }
+
         this.setState({
           gameState: newGameState,
           comboScore: newComboScore,
@@ -185,6 +192,20 @@ export default class gameView extends Component {
         });
       }
     }
+  };
+
+  animateScoreBig = () => {
+    Animated.timing(this.state.scoreAnim, {
+      toValue: 1.5,
+      duration: 250
+    }).start();
+  };
+
+  animateScoreSmall = () => {
+    Animated.timing(this.state.scoreAnim, {
+      toValue: 1,
+      duration: 250
+    }).start();
   };
 
   threeInRow = () => {
@@ -310,7 +331,13 @@ export default class gameView extends Component {
             {"Combo: " + this.state.comboScore}
           </Text>
 
-          <Text style={styles.scoreText}>{this.state.score}</Text>
+          <Animated.View
+            style={{
+              transform: [{ scale: this.state.scoreAnim }]
+            }}
+          >
+            <Text style={styles.scoreText}>{this.state.score}</Text>
+          </Animated.View>
         </View>
 
         <View
@@ -426,7 +453,7 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     fontSize: 75,
-    marginBottom: 50
+    marginBottom: 20
   },
   comboScoreText: {
     fontSize: 20,
